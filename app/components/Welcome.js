@@ -18,14 +18,18 @@ class Welcome extends Component {
   }
 
   getButtonColourByBalance = (balance) => {
-    if (balance < -5.0) {
-      return 'danger';
-    } else if (balance < 0) {
-      return 'warning';
-    } else if (balance < 5) {
-      return 'info';
-    } else {
-      return 'success';
+    const colors = [
+      [ -5, '#FFF', '#FF0000', '#DC143C', 'Red'],
+      [  0, '#FFF', '#FFFF00', '#FFD700', 'Yellow'],
+      [  1, '#FFF', '#87CEFA', '#6495ED', 'LightSkyBlue'],
+      [  5, '#FFF', '#4FF0D4', '#40E0B0', 'Aquamarine'],
+      [ 10, '#FFF', '#7CFC00', '#32CD32', 'LawnGreen'],
+      [ 50, '#FFF', '#008000', '#006000', 'DarkGreen'],
+      [Infinity, '#FFF', '#FF69B4', '#C71585', 'HotPink'],
+    ];
+    for(let [limit, textColor, colorLight, colorDark, label] of colors) {
+      if(balance < limit)
+        return [textColor, colorLight, colorDark];
     }
   }
 
@@ -33,10 +37,18 @@ class Welcome extends Component {
     const {actions: {login}} = this.props;
     const isSeverelyIndebted = balance < -10;
 
+    console.log(balance, this.getButtonColourByBalance(balance));
+    const [textColor, colorLight, colorDark] = this.getButtonColourByBalance(balance);
     return (
       <Button
         key={id}
-        bsStyle={this.getButtonColourByBalance(balance)}
+        bsStyle="success"
+        style={{
+          color: textColor,
+          backgroundColor: colorDark,
+          backgroundImage: `linear-gradient(${colorLight}, ${colorDark})`,
+          borderColor: colorDark,
+        }}
         styleName={isSeverelyIndebted ? 'debt' : 'nameLogin'}
         onClick={() => login(id)}
       >
